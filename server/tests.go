@@ -4,9 +4,12 @@ import (
 	"context"
 	"errors"
 	"io"
+	"log"
+	"time"
 
 	"github.com/farinas09/go-grpc/models"
 	"github.com/farinas09/go-grpc/repository"
+	"github.com/farinas09/go-grpc/studentpb"
 	"github.com/farinas09/go-grpc/testpb"
 )
 
@@ -64,4 +67,43 @@ func (s *TestServer) SetQuestions(stream testpb.TestService_SetQuestionsServer) 
 		}
 	}
 
+}
+
+func (s *TestServer) EnrollStudents(stream testpb.TestService_EnrollStudentsServer) error {
+	for {
+		msg, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&testpb.SetQuestionResponse{Ok: true})
+		}
+		if err != nil {
+			return err
+		}
+		err = s.repo.SetEnrollment(context.Background(), &models.Enrollment{
+			StudentId: msg.GetStudentId(),
+			TestId:    msg.GetTestId(),
+		})
+		if err != nil {
+			log.Println("Error setting enrollment:", err)
+			return stream.SendAndClose(&testpb.SetQuestionResponse{Ok: false})
+		}
+	}
+}
+
+func (s *TestServer) GetStudentsPerTest(req *testpb.GetStudentsPerTestRequest, stream testpb.TestService_GetStudentsPerTestServer) error {
+	students, err := s.repo.GetStudentsPerTest(context.Background(), req.GetTestId())
+	if err != nil {
+		return err
+	}
+	for _, student := range students {
+		time.Sleep(1 * time.Second)
+		err = stream.Send(&studentpb.Student{
+			Id:   student.Id,
+			Name: student.Name,
+			Age:  student.Age,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

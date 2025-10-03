@@ -66,3 +66,33 @@ func (repo *PostgresRepository) SetQuestion(ctx context.Context, question *model
 	_, err := repo.db.ExecContext(ctx, "INSERT INTO questions (id, question, answer, test_id) VALUES ($1, $2, $3, $4)", question.Id, question.Question, question.Answer, question.TestId)
 	return err
 }
+
+func (repo *PostgresRepository) SetEnrollment(ctx context.Context, enrollment *models.Enrollment) error {
+	_, err := repo.db.ExecContext(ctx, "INSERT INTO enrollments (student_id, test_id) VALUES ($1, $2)", enrollment.StudentId, enrollment.TestId)
+	return err
+}
+
+func (repo *PostgresRepository) GetStudentsPerTest(ctx context.Context, testId string) ([]*models.Student, error) {
+	var students []*models.Student
+
+	rows, err := repo.db.QueryContext(ctx, "SELECT students.id, students.name, students.age FROM students JOIN enrollments ON students.id = enrollments.student_id WHERE enrollments.test_id = $1", testId)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var student models.Student
+		err := rows.Scan(&student.Id, &student.Name, &student.Age)
+		if err != nil {
+			return nil, err
+		}
+		students = append(students, &student)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return students, nil
+}
