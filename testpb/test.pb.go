@@ -169,6 +169,118 @@ func (x *SetTestResponse) GetName() string {
 	return ""
 }
 
+type Question struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Question      string                 `protobuf:"bytes,2,opt,name=question,proto3" json:"question,omitempty"`
+	Answer        string                 `protobuf:"bytes,3,opt,name=answer,proto3" json:"answer,omitempty"`
+	TestId        string                 `protobuf:"bytes,4,opt,name=test_id,json=testId,proto3" json:"test_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Question) Reset() {
+	*x = Question{}
+	mi := &file_testpb_test_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Question) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Question) ProtoMessage() {}
+
+func (x *Question) ProtoReflect() protoreflect.Message {
+	mi := &file_testpb_test_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Question.ProtoReflect.Descriptor instead.
+func (*Question) Descriptor() ([]byte, []int) {
+	return file_testpb_test_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Question) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Question) GetQuestion() string {
+	if x != nil {
+		return x.Question
+	}
+	return ""
+}
+
+func (x *Question) GetAnswer() string {
+	if x != nil {
+		return x.Answer
+	}
+	return ""
+}
+
+func (x *Question) GetTestId() string {
+	if x != nil {
+		return x.TestId
+	}
+	return ""
+}
+
+type SetQuestionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ok            bool                   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetQuestionResponse) Reset() {
+	*x = SetQuestionResponse{}
+	mi := &file_testpb_test_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetQuestionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetQuestionResponse) ProtoMessage() {}
+
+func (x *SetQuestionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_testpb_test_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetQuestionResponse.ProtoReflect.Descriptor instead.
+func (*SetQuestionResponse) Descriptor() ([]byte, []int) {
+	return file_testpb_test_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *SetQuestionResponse) GetOk() bool {
+	if x != nil {
+		return x.Ok
+	}
+	return false
+}
+
 var File_testpb_test_proto protoreflect.FileDescriptor
 
 const file_testpb_test_proto_rawDesc = "" +
@@ -181,12 +293,20 @@ const file_testpb_test_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"5\n" +
 	"\x0fSetTestResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name2h\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"g\n" +
+	"\bQuestion\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
+	"\bquestion\x18\x02 \x01(\tR\bquestion\x12\x16\n" +
+	"\x06answer\x18\x03 \x01(\tR\x06answer\x12\x17\n" +
+	"\atest_id\x18\x04 \x01(\tR\x06testId\"%\n" +
+	"\x13SetQuestionResponse\x12\x0e\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok2\xa5\x01\n" +
 	"\vTestService\x12+\n" +
 	"\aGetTest\x12\x14.test.GetTestRequest\x1a\n" +
 	".test.Test\x12,\n" +
 	"\aSetTest\x12\n" +
-	".test.Test\x1a\x15.test.SetTestResponseB%Z#github.com/farinas09/go-grpc;testpbb\x06proto3"
+	".test.Test\x1a\x15.test.SetTestResponse\x12;\n" +
+	"\fSetQuestions\x12\x0e.test.Question\x1a\x19.test.SetQuestionResponse(\x01B%Z#github.com/farinas09/go-grpc;testpbb\x06proto3"
 
 var (
 	file_testpb_test_proto_rawDescOnce sync.Once
@@ -200,19 +320,23 @@ func file_testpb_test_proto_rawDescGZIP() []byte {
 	return file_testpb_test_proto_rawDescData
 }
 
-var file_testpb_test_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_testpb_test_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_testpb_test_proto_goTypes = []any{
-	(*Test)(nil),            // 0: test.Test
-	(*GetTestRequest)(nil),  // 1: test.GetTestRequest
-	(*SetTestResponse)(nil), // 2: test.SetTestResponse
+	(*Test)(nil),                // 0: test.Test
+	(*GetTestRequest)(nil),      // 1: test.GetTestRequest
+	(*SetTestResponse)(nil),     // 2: test.SetTestResponse
+	(*Question)(nil),            // 3: test.Question
+	(*SetQuestionResponse)(nil), // 4: test.SetQuestionResponse
 }
 var file_testpb_test_proto_depIdxs = []int32{
 	1, // 0: test.TestService.GetTest:input_type -> test.GetTestRequest
 	0, // 1: test.TestService.SetTest:input_type -> test.Test
-	0, // 2: test.TestService.GetTest:output_type -> test.Test
-	2, // 3: test.TestService.SetTest:output_type -> test.SetTestResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	3, // 2: test.TestService.SetQuestions:input_type -> test.Question
+	0, // 3: test.TestService.GetTest:output_type -> test.Test
+	2, // 4: test.TestService.SetTest:output_type -> test.SetTestResponse
+	4, // 5: test.TestService.SetQuestions:output_type -> test.SetQuestionResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -229,7 +353,7 @@ func file_testpb_test_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_testpb_test_proto_rawDesc), len(file_testpb_test_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 
 	"github.com/farinas09/go-grpc/models"
 	"github.com/farinas09/go-grpc/repository"
@@ -21,6 +22,9 @@ func (s *Server) GetStudent(ctx context.Context, req *studentpb.GetStudentReques
 	student, err := s.repo.GetStudent(ctx, req.GetId())
 	if err != nil {
 		return nil, err
+	}
+	if student == nil {
+		return nil, errors.New("student not found")
 	}
 	return &studentpb.Student{
 		Id:   student.Id,
