@@ -107,3 +107,38 @@ func (s *TestServer) GetStudentsPerTest(req *testpb.GetStudentsPerTestRequest, s
 	}
 	return nil
 }
+
+func (s *TestServer) TakeTest(stream testpb.TestService_TakeTestServer) error {
+	questions, err := s.repo.GetQuestionsPerTest(context.Background(), "test1")
+
+	if err != nil {
+		return err
+	}
+
+	i := 0
+	var currentQuestion = &models.Question{}
+	for {
+		if i < len(questions) {
+			currentQuestion = questions[i]
+			i++
+		}
+		if i <= len(questions) {
+			err = stream.Send(&testpb.Question{
+				Id:       currentQuestion.Id,
+				Question: currentQuestion.Question,
+			})
+			if err != nil {
+				return err
+			}
+			i++
+		}
+		answer, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		log.Println("Answer received:", answer.GetAnswer())
+	}
+}

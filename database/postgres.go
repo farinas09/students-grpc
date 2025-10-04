@@ -96,3 +96,28 @@ func (repo *PostgresRepository) GetStudentsPerTest(ctx context.Context, testId s
 
 	return students, nil
 }
+
+func (repo *PostgresRepository) GetQuestionsPerTest(ctx context.Context, testId string) ([]*models.Question, error) {
+	var questions []*models.Question
+
+	rows, err := repo.db.QueryContext(ctx, "SELECT id, question FROM questions WHERE test_id = $1", testId)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var question models.Question
+		err := rows.Scan(&question.Id, &question.Question)
+		if err != nil {
+			return nil, err
+		}
+		questions = append(questions, &question)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return questions, nil
+}
