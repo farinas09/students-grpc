@@ -41,7 +41,6 @@ message GetStudentsPerTestRequest {
 
 message TakeTestRequest {
     string answer = 1;
-    string test_id = 2;
 }
 
 service TestService {

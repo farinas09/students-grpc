@@ -23,6 +23,7 @@ Ambos servicios comparten la misma base de datos PostgreSQL y utilizan el patró
 - ✅ Agregar preguntas a exámenes (`SetQuestions`) - Streaming
 - ✅ Inscribir estudiantes a exámenes (`EnrollStudents`) - Streaming
 - ✅ Obtener estudiantes inscritos en un examen (`GetStudentsPerTest`) - Streaming
+- ✅ Realizar examen (`TakeTest`) - Streaming bidireccional
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -53,6 +54,8 @@ go-grpc/
 │   └── main.go             # Punto de entrada del servicio
 ├── server-test/            # Servidor de exámenes
 │   └── main.go             # Punto de entrada del servicio
+├── client/                 # Cliente de ejemplo
+│   └── main.go             # Cliente para probar los servicios
 ├── studentpb/              # Archivos generados de Protocol Buffers
 │   ├── student.proto       # Definición del servicio de estudiantes
 │   ├── student.pb.go       # Código Go generado
@@ -119,6 +122,14 @@ go run server-test/main.go
 
 El servicio estará disponible en `localhost:50052`
 
+### Ejecutar el cliente de ejemplo
+
+```bash
+go run client/main.go
+```
+
+El cliente se conecta al servicio de exámenes y demuestra el uso de los métodos gRPC.
+
 ## 📊 Base de Datos
 
 ### Esquema
@@ -153,6 +164,22 @@ Para cambiar la configuración de la base de datos, edita las cadenas de conexi�
 
 ## 📡 API gRPC
 
+### Métodos Principales
+
+#### TakeTest - Realizar Examen
+El método `TakeTest` implementa un streaming bidireccional que permite:
+- **Entrada**: El cliente envía respuestas (`TakeTestRequest` con `answer` y `test_id`)
+- **Salida**: El servidor envía preguntas (`Question` con `id` y `question`)
+- **Flujo**: El servidor envía una pregunta, espera la respuesta del cliente, y continúa con la siguiente pregunta
+
+**Estructura del mensaje TakeTestRequest:**
+```protobuf
+message TakeTestRequest {
+    string answer = 1;    // Respuesta del estudiante
+    string test_id = 2;   // ID del examen a realizar
+}
+```
+
 ### Servicio de Estudiantes
 
 ```protobuf
@@ -171,7 +198,24 @@ service TestService {
     rpc SetQuestions(stream Question) returns (SetQuestionResponse);
     rpc EnrollStudents(stream EnrollmentRequest) returns (SetQuestionResponse);
     rpc GetStudentsPerTest(GetStudentsPerTestRequest) returns (stream student.Student);
+    rpc TakeTest(stream TakeTestRequest) returns (stream Question);
 }
+```
+
+## 🐛 Troubleshooting
+
+### Regenerar archivos Protocol Buffers
+
+Si modificas los archivos `.proto`, regenera el código Go:
+
+```bash
+# Instalar dependencias de protoc-gen-go
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+# Regenerar archivos
+protoc --go_out=. --go-grpc_out=. studentpb/student.proto
+protoc --go_out=. --go-grpc_out=. testpb/test.proto
 ```
 
 ## 👨‍💻 Autor
